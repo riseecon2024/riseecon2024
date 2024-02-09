@@ -26,44 +26,6 @@
 
 <body>
     <div id="map"></div>
-    <input type="text" id="searchInput" placeholder="Search by Bank...">
-    <script src="Branchesasof122023_2.js"></script> <!-- Load the Branchesasof122023_2.js file -->
-    <script>
-        var map = L.map('map').setView([36.076, -119.833], 7); // Example initial map view
-
-        // Add tile layer here
-
-        var searchInput = document.getElementById('searchInput');
-
-        // Event listener for search input
-        searchInput.addEventListener('input', function() {
-            var query = this.value.trim().toLowerCase();
-            filterBranches(query);
-        });
-
-        // Function to filter branches based on bank name
-        function filterBranches(query) {
-            // Iterate over branches and check if the bank name matches the search query
-            branches.forEach(function(branch) {
-                var bankName = branch.Bank.toLowerCase();
-
-                // Check if bank name matches search query
-                var matchesQuery = bankName.includes(query);
-
-                // Show/hide branch based on whether it matches the search query
-                var marker = branch.marker; // Get marker associated with branch
-                if (matchesQuery) {
-                    marker.addTo(map); // Show marker
-                } else {
-                    map.removeLayer(marker); // Hide marker
-                }
-            });
-        }
-
-    </script>
-</body>
-
-  
 <script src="qgis2web_expressions.js"></script>
 <script src="leaflet.js"></script>
 <script src="L.Control.Locate.min.js"></script>
