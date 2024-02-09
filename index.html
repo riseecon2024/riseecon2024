@@ -1,39 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Our Website</title>
-    <style>
-        /* You can add CSS styles here */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-        }
-        .intro-section {
-            text-align: center;
-            padding: 50px;
-        }
-        h1 {
-            font-size: 36px;
-            color: #333;
-        }
-        p {
-            font-size: 18px;
-            color: #666;
-        }
-    </style>
-</head>
-<body>
-    <div class="intro-section">
-        <h1>Welcome to Our Website</h1>
-        <p>This is a brief introduction to our website. Feel free to explore!</p>
-    </div>
-</body>
-</html>
-
 <!doctype html>
 <html lang="en">
     <head>
@@ -49,18 +13,15 @@
         <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
         <style>
         #map {
-            width: 926px;
-            height: 812px;
+            width: 1511px;
+            height: 600px;
         }
         </style>
         <title></title>
     </head>
     <body>
-       <body>
-    <div id="map" style="height: 400px;"></div>
-
-    <!-- Include Leaflet and other JavaScript files -->
-    <script src="js/leaflet.js"></script>
+        <div id="map">
+        </div>
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
         <script src="js/leaflet.rotatedMarker.js"></script>
@@ -95,7 +56,7 @@
         }
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:7
-        }).fitBounds([[33.1762965350779,-120.86179320039822],[38.04001939557792,-115.31354638175355]]);
+        }).fitBounds([[33.1762965350779,-124.22425657744267],[38.04001939557789,-111.95108300470953]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -583,7 +544,7 @@
         function style_Branchesasof122023_2_0() {
             return {
                 pane: 'pane_Branchesasof122023_2',
-                radius: 3.199999999999997,
+                radius: 3.2,
                 opacity: 1,
                 color: 'rgba(128,17,25,1.0)',
                 dashArray: '',
@@ -648,7 +609,7 @@
         document.getElementById("all").appendChild(col1);
         document.getElementById("all").appendChild(col2);
         col1.appendChild(mapDiv)
-        var Filters = {"Bank": "str","Tract Minority": "str","Tract Income": "str"};
+        var Filters = {"Tract Income": "str","Bank": "str","Tract Minority": "str"};
         function filterFunc() {
           map.eachLayer(function(lyr){
           if ("options" in lyr && "dataVar" in lyr["options"]){
@@ -738,6 +699,40 @@
           }
           })
         }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_TractIncome = document.createElement('div');
+            div_TractIncome.id = "div_TractIncome";
+            div_TractIncome.className= "filterselect";
+            document.getElementById("menu").appendChild(div_TractIncome);
+            sel_TractIncome = document.createElement('select');
+            sel_TractIncome.multiple = true;
+            sel_TractIncome.size = 5;
+            sel_TractIncome.id = "sel_TractIncome";
+            var TractIncome_options_str = "<option value='' unselected></option>";
+            sel_TractIncome.onchange = function(){filterFunc()};
+            TractIncome_options_str  += '<option value="low income">low income</option>';
+            TractIncome_options_str  += '<option value="middle income">middle income</option>';
+            TractIncome_options_str  += '<option value="moderate income">moderate income</option>';
+            TractIncome_options_str  += '<option value="tract income not available">tract income not available</option>';
+            TractIncome_options_str  += '<option value="upper income">upper income</option>';
+            sel_TractIncome.innerHTML = TractIncome_options_str;
+            div_TractIncome.appendChild(sel_TractIncome);
+            var lab_TractIncome = document.createElement('div');
+            lab_TractIncome.innerHTML = 'Tract Income';
+            lab_TractIncome.className = 'filterlabel';
+            div_TractIncome.appendChild(lab_TractIncome);
+            var reset_TractIncome = document.createElement('div');
+            reset_TractIncome.innerHTML = 'clear filter';
+            reset_TractIncome.className = 'filterlabel';
+            reset_TractIncome.onclick = function() {
+                var options = document.getElementById("sel_TractIncome").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_TractIncome.appendChild(reset_TractIncome);
             document.getElementById("menu").appendChild(
                 document.createElement("div"));
             var div_Bank = document.createElement('div');
@@ -987,40 +982,6 @@
                 filterFunc();
             };
             div_TractMinority.appendChild(reset_TractMinority);
-            document.getElementById("menu").appendChild(
-                document.createElement("div"));
-            var div_TractIncome = document.createElement('div');
-            div_TractIncome.id = "div_TractIncome";
-            div_TractIncome.className= "filterselect";
-            document.getElementById("menu").appendChild(div_TractIncome);
-            sel_TractIncome = document.createElement('select');
-            sel_TractIncome.multiple = true;
-            sel_TractIncome.size = 5;
-            sel_TractIncome.id = "sel_TractIncome";
-            var TractIncome_options_str = "<option value='' unselected></option>";
-            sel_TractIncome.onchange = function(){filterFunc()};
-            TractIncome_options_str  += '<option value="low income">low income</option>';
-            TractIncome_options_str  += '<option value="middle income">middle income</option>';
-            TractIncome_options_str  += '<option value="moderate income">moderate income</option>';
-            TractIncome_options_str  += '<option value="tract income not available">tract income not available</option>';
-            TractIncome_options_str  += '<option value="upper income">upper income</option>';
-            sel_TractIncome.innerHTML = TractIncome_options_str;
-            div_TractIncome.appendChild(sel_TractIncome);
-            var lab_TractIncome = document.createElement('div');
-            lab_TractIncome.innerHTML = 'Tract Income';
-            lab_TractIncome.className = 'filterlabel';
-            div_TractIncome.appendChild(lab_TractIncome);
-            var reset_TractIncome = document.createElement('div');
-            reset_TractIncome.innerHTML = 'clear filter';
-            reset_TractIncome.className = 'filterlabel';
-            reset_TractIncome.onclick = function() {
-                var options = document.getElementById("sel_TractIncome").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_TractIncome.appendChild(reset_TractIncome);
         </script>
     </body>
 </html>
