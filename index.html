@@ -23,6 +23,35 @@
 </head>
 <body>
 <div id="map"></div>
+<input type="text" id="searchInput" placeholder="Search...">
+<script>
+var searchInput = document.getElementById('searchInput');
+
+searchInput.addEventListener('input', function() {
+  var query = this.value.trim(); // Get the search query and remove leading/trailing whitespace
+  filterBranches(query);
+});
+function filterBranches(query) {
+  // Iterate over bank branches and check if they match the search query
+  branches.forEach(function(branch) {
+    var branchName = branch.name.toLowerCase();
+    var branchLocation = branch.location.toLowerCase();
+    var branchType = branch.type.toLowerCase();
+
+    // Check if branch matches search query
+    var matchesQuery = branchName.includes(query) || branchLocation.includes(query) || branchType.includes(query);
+
+    // Show/hide branch based on whether it matches the search query
+    var marker = branch.marker; // Get marker associated with branch
+    if (matchesQuery) {
+      marker.addTo(map); // Show marker
+    } else {
+      map.removeLayer(marker); // Hide marker
+    }
+  });
+}
+
+</script>   
 <script src="qgis2web_expressions.js"></script>
 <script src="leaflet.js"></script>
 <script src="L.Control.Locate.min.js"></script>
