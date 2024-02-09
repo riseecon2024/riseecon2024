@@ -987,34 +987,7 @@
                 filterFunc();
             };
             div_Bank.appendChild(reset_Bank);
-       
-<table id="summaryTable">
-    <thead>
-        <tr>
-            <th>Branch Name</th>
-            <th>Location</th>
-            <th>Type</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Table body will be populated dynamically -->
-    </tbody>
-</table>
-// Function to update the summary table based on filtered branches by the "Bank" field
-function updateSummaryTable(filteredBranches) {
-    var tableBody = document.querySelector('#summaryTable tbody');
-    // Clear the table body first
-    tableBody.innerHTML = '';
 
-    // Loop through filtered branches and populate the table
-    filteredBranches.forEach(function(branch) {
-        var row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${branch.Bank}</td>
-            <td>${branch.Location}</td>
-            <td>${branch.Type}</td>
-        `;
-        tableBody.appendChild(row);
     });
 }
 
