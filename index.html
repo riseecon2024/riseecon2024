@@ -23,35 +23,47 @@
 </head>
 <body>
 <div id="map"></div>
-<input type="text" id="searchInput" placeholder="Search...">
-<script>
-var searchInput = document.getElementById('searchInput');
 
-searchInput.addEventListener('input', function() {
-  var query = this.value.trim(); // Get the search query and remove leading/trailing whitespace
-  filterBranches(query);
-});
-function filterBranches(query) {
-  // Iterate over bank branches and check if they match the search query
-  branches.forEach(function(branch) {
-    var branchName = branch.name.toLowerCase();
-    var branchLocation = branch.location.toLowerCase();
-    var branchType = branch.type.toLowerCase();
+<body>
+    <div id="map"></div>
+    <input type="text" id="searchInput" placeholder="Search by Bank...">
+    <script src="Branchesasof122023_2.js"></script> <!-- Load the Branchesasof122023_2.js file -->
+    <script>
+        var map = L.map('map').setView([36.076, -119.833], 7); // Example initial map view
 
-    // Check if branch matches search query
-    var matchesQuery = branchName.includes(query) || branchLocation.includes(query) || branchType.includes(query);
+        // Add tile layer here
 
-    // Show/hide branch based on whether it matches the search query
-    var marker = branch.marker; // Get marker associated with branch
-    if (matchesQuery) {
-      marker.addTo(map); // Show marker
-    } else {
-      map.removeLayer(marker); // Hide marker
-    }
-  });
-}
+        var searchInput = document.getElementById('searchInput');
 
-</script>   
+        // Event listener for search input
+        searchInput.addEventListener('input', function() {
+            var query = this.value.trim().toLowerCase();
+            filterBranches(query);
+        });
+
+        // Function to filter branches based on bank name
+        function filterBranches(query) {
+            // Iterate over branches and check if the bank name matches the search query
+            branches.forEach(function(branch) {
+                var bankName = branch.Bank.toLowerCase();
+
+                // Check if bank name matches search query
+                var matchesQuery = bankName.includes(query);
+
+                // Show/hide branch based on whether it matches the search query
+                var marker = branch.marker; // Get marker associated with branch
+                if (matchesQuery) {
+                    marker.addTo(map); // Show marker
+                } else {
+                    map.removeLayer(marker); // Hide marker
+                }
+            });
+        }
+
+    </script>
+</body>
+
+  
 <script src="qgis2web_expressions.js"></script>
 <script src="leaflet.js"></script>
 <script src="L.Control.Locate.min.js"></script>
@@ -104,7 +116,7 @@ function filterBranches(query) {
          }
          return tempDiv.innerHTML;
         }
-        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        L.control.locate({locateOptions: {maxZoom: 10}}).addTo(map);
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
         }
