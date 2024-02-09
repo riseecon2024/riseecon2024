@@ -609,7 +609,7 @@
         document.getElementById("all").appendChild(col1);
         document.getElementById("all").appendChild(col2);
         col1.appendChild(mapDiv)
-        var Filters = {"Tract Income": "str","Bank": "str","Tract Minority": "str"};
+        var Filters = {"Tract Income": "str","Tract Minority": "str","Bank": "str"};
         function filterFunc() {
           map.eachLayer(function(lyr){
           if ("options" in lyr && "dataVar" in lyr["options"]){
@@ -733,6 +733,37 @@
                 filterFunc();
             };
             div_TractIncome.appendChild(reset_TractIncome);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_TractMinority = document.createElement('div');
+            div_TractMinority.id = "div_TractMinority";
+            div_TractMinority.className= "filterselect";
+            document.getElementById("menu").appendChild(div_TractMinority);
+            sel_TractMinority = document.createElement('select');
+            sel_TractMinority.multiple = true;
+            sel_TractMinority.size = 2;
+            sel_TractMinority.id = "sel_TractMinority";
+            var TractMinority_options_str = "<option value='' unselected></option>";
+            sel_TractMinority.onchange = function(){filterFunc()};
+            TractMinority_options_str  += '<option value="majority-minority">majority-minority</option>';
+            TractMinority_options_str  += '<option value="majority-white">majority-white</option>';
+            sel_TractMinority.innerHTML = TractMinority_options_str;
+            div_TractMinority.appendChild(sel_TractMinority);
+            var lab_TractMinority = document.createElement('div');
+            lab_TractMinority.innerHTML = 'Tract Minority';
+            lab_TractMinority.className = 'filterlabel';
+            div_TractMinority.appendChild(lab_TractMinority);
+            var reset_TractMinority = document.createElement('div');
+            reset_TractMinority.innerHTML = 'clear filter';
+            reset_TractMinority.className = 'filterlabel';
+            reset_TractMinority.onclick = function() {
+                var options = document.getElementById("sel_TractMinority").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_TractMinority.appendChild(reset_TractMinority);
             document.getElementById("menu").appendChild(
                 document.createElement("div"));
             var div_Bank = document.createElement('div');
@@ -951,37 +982,6 @@
                 filterFunc();
             };
             div_Bank.appendChild(reset_Bank);
-            document.getElementById("menu").appendChild(
-                document.createElement("div"));
-            var div_TractMinority = document.createElement('div');
-            div_TractMinority.id = "div_TractMinority";
-            div_TractMinority.className= "filterselect";
-            document.getElementById("menu").appendChild(div_TractMinority);
-            sel_TractMinority = document.createElement('select');
-            sel_TractMinority.multiple = true;
-            sel_TractMinority.size = 2;
-            sel_TractMinority.id = "sel_TractMinority";
-            var TractMinority_options_str = "<option value='' unselected></option>";
-            sel_TractMinority.onchange = function(){filterFunc()};
-            TractMinority_options_str  += '<option value="majority-minority">majority-minority</option>';
-            TractMinority_options_str  += '<option value="majority-white">majority-white</option>';
-            sel_TractMinority.innerHTML = TractMinority_options_str;
-            div_TractMinority.appendChild(sel_TractMinority);
-            var lab_TractMinority = document.createElement('div');
-            lab_TractMinority.innerHTML = 'Tract Minority';
-            lab_TractMinority.className = 'filterlabel';
-            div_TractMinority.appendChild(lab_TractMinority);
-            var reset_TractMinority = document.createElement('div');
-            reset_TractMinority.innerHTML = 'clear filter';
-            reset_TractMinority.className = 'filterlabel';
-            reset_TractMinority.onclick = function() {
-                var options = document.getElementById("sel_TractMinority").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_TractMinority.appendChild(reset_TractMinority);
         </script>
     </body>
 </html>
