@@ -1,51 +1,45 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="stylesheet" href="leaflet.css">
-<link rel="stylesheet" href="L.Control.Locate.min.css">
-<link rel="stylesheet" href="qgis2web.css">
-<link rel="stylesheet" href="fontawesome-all.min.css">
-<link rel="stylesheet" href="filter.css">
-<link rel="stylesheet" href="nouislider.min.css">
-<link rel="stylesheet" href="leaflet-control-geocoder.Geocoder.css">
-<style>
-    /* Set the map to take up the full viewport */
-    html, body, #map {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-</style>
-    <title>Bank Branches as of 2023</title>
-</head>
-
-
-<body>
-    <div id="map"></div>
-<script src="qgis2web_expressions.js"></script>
-<script src="leaflet.js"></script>
-<script src="L.Control.Locate.min.js"></script>
-<script src="leaflet.rotatedMarker.js"></script>
-<script src="leaflet.pattern.js"></script>
-<script src="leaflet-hash.js"></script>
-<script src="Autolinker.min.js"></script>
-<script src="rbush.min.js"></script>
-<script src="labelgun.min.js"></script>
-<script src="labels.js"></script>
-<script src="leaflet-control-geocoder.Geocoder.js"></script>
-<script src="htailDT.js"></script>
-<script src="nouislider.min.js"></script>
-<script src="wNumb.js"></script>
-<script src="TractIncome_1.js"></script>
-<script src="Branchesasof122023_2.js"></script>
-<script>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/proj4.js"></script>
+        <script src="js/proj4leaflet.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/Buffered_1.js"></script>
+        <script src="data/WellsRBC_02272024_2.js"></script>
+        <script>
         var highlightLayer;
         function highlightFeature(e) {
             highlightLayer = e.target;
@@ -62,9 +56,15 @@
             }
             highlightLayer.openPopup();
         }
+        var crs = new L.Proj.CRS('EPSG:4269', '+proj=longlat +datum=NAD83 +no_defs', {
+            resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07],
+        });
         var map = L.map('map', {
-            zoomControl:true, maxZoom:28, minZoom:7
-        }).fitBounds([[33.1762965350779,-124.22425657744267],[38.04001939557789,-111.95108300470953]]);
+            crs: crs,
+            continuousWorld: false,
+            worldCopyJump: false, 
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[32.88821726714055,-121.5952335326351],[37.593241215749025,-114.48801723262515]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -81,7 +81,16 @@
          }
          return tempDiv.innerHTML;
         }
-        L.control.locate({locateOptions: {maxZoom: 10}}).addTo(map);
+        document.querySelector(".leaflet-popup-pane").addEventListener("load", function(event) {
+          var tagName = event.target.tagName,
+            popup = map._popup;
+          // Also check if flag is already set.
+          if (tagName === "IMG" && popup && !popup._updated) {
+            popup._updated = true; // Set flag to prevent looping.
+            popup.update();
+          }
+        }, true);
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
         }
@@ -91,14 +100,14 @@
             pane: 'pane_OpenStreetMap_0',
             opacity: 1.0,
             attribution: '',
-            minZoom: 7,
+            minZoom: 1,
             maxZoom: 28,
             minNativeZoom: 0,
             maxNativeZoom: 19
         });
         layer_OpenStreetMap_0;
         map.addLayer(layer_OpenStreetMap_0);
-        function pop_TractIncome_1(feature, layer) {
+        function pop_Buffered_1(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (i in e.target._eventParents) {
@@ -116,292 +125,16 @@
             });
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['STATEFP'] !== null ? autolinker.link(feature.properties['STATEFP'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">FACILITY N</th>\
+                        <td class="visible-with-data" id="FACILITY N">' + (feature.properties['FACILITY N'] !== null ? autolinker.link(feature.properties['FACILITY N'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['COUNTYFP'] !== null ? autolinker.link(feature.properties['COUNTYFP'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">PARENT COM</th>\
+                        <td class="visible-with-data" id="PARENT COM">' + (feature.properties['PARENT COM'] !== null ? autolinker.link(feature.properties['PARENT COM'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['TRACTCE'] !== null ? autolinker.link(feature.properties['TRACTCE'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['GEOID'] !== null ? autolinker.link(feature.properties['GEOID'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['GEOIDFQ'] !== null ? autolinker.link(feature.properties['GEOIDFQ'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['NAMELSAD'] !== null ? autolinker.link(feature.properties['NAMELSAD'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['MTFCC'] !== null ? autolinker.link(feature.properties['MTFCC'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['FUNCSTAT'] !== null ? autolinker.link(feature.properties['FUNCSTAT'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['ALAND'] !== null ? autolinker.link(feature.properties['ALAND'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['AWATER'] !== null ? autolinker.link(feature.properties['AWATER'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['INTPTLAT'] !== null ? autolinker.link(feature.properties['INTPTLAT'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['INTPTLON'] !== null ? autolinker.link(feature.properties['INTPTLON'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_1'] !== null ? autolinker.link(feature.properties['field_1'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_3'] !== null ? autolinker.link(feature.properties['field_3'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_4'] !== null ? autolinker.link(feature.properties['field_4'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_5'] !== null ? autolinker.link(feature.properties['field_5'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_6'] !== null ? autolinker.link(feature.properties['field_6'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_7'] !== null ? autolinker.link(feature.properties['field_7'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_8'] !== null ? autolinker.link(feature.properties['field_8'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_9'] !== null ? autolinker.link(feature.properties['field_9'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_10'] !== null ? autolinker.link(feature.properties['field_10'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_11'] !== null ? autolinker.link(feature.properties['field_11'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_12'] !== null ? autolinker.link(feature.properties['field_12'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_13'] !== null ? autolinker.link(feature.properties['field_13'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_14'] !== null ? autolinker.link(feature.properties['field_14'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_15'] !== null ? autolinker.link(feature.properties['field_15'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_16'] !== null ? autolinker.link(feature.properties['field_16'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_17'] !== null ? autolinker.link(feature.properties['field_17'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_18'] !== null ? autolinker.link(feature.properties['field_18'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_19'] !== null ? autolinker.link(feature.properties['field_19'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_20'] !== null ? autolinker.link(feature.properties['field_20'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_21'] !== null ? autolinker.link(feature.properties['field_21'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_22'] !== null ? autolinker.link(feature.properties['field_22'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_23'] !== null ? autolinker.link(feature.properties['field_23'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_24'] !== null ? autolinker.link(feature.properties['field_24'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_25'] !== null ? autolinker.link(feature.properties['field_25'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_26'] !== null ? autolinker.link(feature.properties['field_26'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_27'] !== null ? autolinker.link(feature.properties['field_27'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_28'] !== null ? autolinker.link(feature.properties['field_28'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_29'] !== null ? autolinker.link(feature.properties['field_29'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_30'] !== null ? autolinker.link(feature.properties['field_30'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_31'] !== null ? autolinker.link(feature.properties['field_31'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_32'] !== null ? autolinker.link(feature.properties['field_32'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_33'] !== null ? autolinker.link(feature.properties['field_33'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_34'] !== null ? autolinker.link(feature.properties['field_34'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_35'] !== null ? autolinker.link(feature.properties['field_35'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_36'] !== null ? autolinker.link(feature.properties['field_36'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_37'] !== null ? autolinker.link(feature.properties['field_37'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_38'] !== null ? autolinker.link(feature.properties['field_38'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_39'] !== null ? autolinker.link(feature.properties['field_39'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_40'] !== null ? autolinker.link(feature.properties['field_40'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_41'] !== null ? autolinker.link(feature.properties['field_41'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_42'] !== null ? autolinker.link(feature.properties['field_42'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_43'] !== null ? autolinker.link(feature.properties['field_43'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_44'] !== null ? autolinker.link(feature.properties['field_44'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_45'] !== null ? autolinker.link(feature.properties['field_45'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_46'] !== null ? autolinker.link(feature.properties['field_46'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_47'] !== null ? autolinker.link(feature.properties['field_47'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_48'] !== null ? autolinker.link(feature.properties['field_48'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_49'] !== null ? autolinker.link(feature.properties['field_49'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_50'] !== null ? autolinker.link(feature.properties['field_50'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_51'] !== null ? autolinker.link(feature.properties['field_51'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_52'] !== null ? autolinker.link(feature.properties['field_52'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_53'] !== null ? autolinker.link(feature.properties['field_53'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_54'] !== null ? autolinker.link(feature.properties['field_54'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_55'] !== null ? autolinker.link(feature.properties['field_55'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_56'] !== null ? autolinker.link(feature.properties['field_56'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_57'] !== null ? autolinker.link(feature.properties['field_57'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_58'] !== null ? autolinker.link(feature.properties['field_58'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_59'] !== null ? autolinker.link(feature.properties['field_59'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_60'] !== null ? autolinker.link(feature.properties['field_60'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_61'] !== null ? autolinker.link(feature.properties['field_61'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_62'] !== null ? autolinker.link(feature.properties['field_62'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_63'] !== null ? autolinker.link(feature.properties['field_63'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_64'] !== null ? autolinker.link(feature.properties['field_64'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_65'] !== null ? autolinker.link(feature.properties['field_65'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_66'] !== null ? autolinker.link(feature.properties['field_66'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_67'] !== null ? autolinker.link(feature.properties['field_67'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_68'] !== null ? autolinker.link(feature.properties['field_68'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_69'] !== null ? autolinker.link(feature.properties['field_69'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_70'] !== null ? autolinker.link(feature.properties['field_70'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_71'] !== null ? autolinker.link(feature.properties['field_71'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_72'] !== null ? autolinker.link(feature.properties['field_72'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_73'] !== null ? autolinker.link(feature.properties['field_73'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_74'] !== null ? autolinker.link(feature.properties['field_74'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_75'] !== null ? autolinker.link(feature.properties['field_75'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_76'] !== null ? autolinker.link(feature.properties['field_76'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_77'] !== null ? autolinker.link(feature.properties['field_77'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_78'] !== null ? autolinker.link(feature.properties['field_78'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_79'] !== null ? autolinker.link(feature.properties['field_79'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_80'] !== null ? autolinker.link(feature.properties['field_80'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_81'] !== null ? autolinker.link(feature.properties['field_81'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_82'] !== null ? autolinker.link(feature.properties['field_82'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_83'] !== null ? autolinker.link(feature.properties['field_83'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['field_84'] !== null ? autolinker.link(feature.properties['field_84'].toLocaleString()) : '') + '</td>\
+                        <th scope="row">GHG QUANTI</th>\
+                        <td class="visible-with-data" id="GHG QUANTI">' + (feature.properties['GHG QUANTI'] !== null ? autolinker.link(feature.properties['GHG QUANTI'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
@@ -411,192 +144,206 @@
             popup.setContent(updatedContent);
         }
 
-        function style_TractIncome_1_0(feature) {
-            switch(String(feature.properties['field_16'])) {
-                case '0':
-                    return {
-                pane: 'pane_TractIncome_1',
-                opacity: 1,
-                color: 'rgba(35,35,35,0.688)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(255,255,255,0.688)',
-                interactive: false,
-            }
-                    break;
-                case '1':
-                    return {
-                pane: 'pane_TractIncome_1',
-                opacity: 1,
-                color: 'rgba(247,247,247,0.688)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(128,128,128,0.688)',
-                interactive: false,
-            }
-                    break;
-                case '2':
-                    return {
-                pane: 'pane_TractIncome_1',
-                opacity: 1,
-                color: 'rgba(35,35,35,0.688)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(250,197,192,0.688)',
-                interactive: false,
-            }
-                    break;
-                case '3':
-                    return {
-                pane: 'pane_TractIncome_1',
-                opacity: 1,
-                color: 'rgba(35,35,35,0.688)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(243,110,65,0.688)',
-                interactive: false,
-            }
-                    break;
-                case '4':
-                    return {
-                pane: 'pane_TractIncome_1',
-                opacity: 1,
-                color: 'rgba(35,35,35,0.688)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(87,27,96,0.688)',
-                interactive: false,
-            }
-                    break;
-            }
-        }
-        map.createPane('pane_TractIncome_1');
-        map.getPane('pane_TractIncome_1').style.zIndex = 401;
-        map.getPane('pane_TractIncome_1').style['mix-blend-mode'] = 'normal';
-        var layer_TractIncome_1 = new L.geoJson(json_TractIncome_1, {
-            attribution: '',
-            interactive: false,
-            dataVar: 'json_TractIncome_1',
-            layerName: 'layer_TractIncome_1',
-            pane: 'pane_TractIncome_1',
-            onEachFeature: pop_TractIncome_1,
-            style: style_TractIncome_1_0,
-        });
-        bounds_group.addLayer(layer_TractIncome_1);
-        map.addLayer(layer_TractIncome_1);
-        function pop_Branchesasof122023_2(feature, layer) {
-            layer.on({
-                mouseout: function(e) {
-                    for (i in e.target._eventParents) {
-                        e.target._eventParents[i].resetStyle(e.target);
-                    }
-                    if (typeof layer.closePopup == 'function') {
-                        layer.closePopup();
-                    } else {
-                        layer.eachLayer(function(feature){
-                            feature.closePopup()
-                        });
-                    }
-                },
-                mouseover: highlightFeature,
-            });
-            var popupContent = '<table>\
-                    <tr>\
-                        <th scope="row">Branch Address</th>\
-                        <td class="visible-with-data" id="Branch Address">' + (feature.properties['Branch Address'] !== null ? autolinker.link(feature.properties['Branch Address'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Bank</th>\
-                        <td class="visible-with-data" id="Bank">' + (feature.properties['Bank'] !== null ? autolinker.link(feature.properties['Bank'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Branch Service Type</th>\
-                        <td class="visible-with-data" id="Branch Service Type">' + (feature.properties['Branch Service Type'] !== null ? autolinker.link(feature.properties['Branch Service Type'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Tract Income</th>\
-                        <td class="visible-with-data" id="Tract Income">' + (feature.properties['Tract Income'] !== null ? autolinker.link(feature.properties['Tract Income'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Tract Minority</th>\
-                        <td class="visible-with-data" id="Tract Minority">' + (feature.properties['Tract Minority'] !== null ? autolinker.link(feature.properties['Tract Minority'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                </table>';
-            layer.bindPopup(popupContent, {maxHeight: 400});
-            var popup = layer.getPopup();
-            var content = popup.getContent();
-            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
-            popup.setContent(updatedContent);
-        }
-
-        function style_Branchesasof122023_2_0() {
+        function style_Buffered_1_0() {
             return {
-                pane: 'pane_Branchesasof122023_2',
-                radius: 3.2,
+                pane: 'pane_Buffered_1',
                 opacity: 1,
-                color: 'rgba(128,17,25,1.0)',
+                color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
-                weight: 2.0,
+                weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(219,30,42,1.0)',
+                fillColor: 'rgba(114,155,111,1.0)',
                 interactive: true,
             }
         }
-        map.createPane('pane_Branchesasof122023_2');
-        map.getPane('pane_Branchesasof122023_2').style.zIndex = 402;
-        map.getPane('pane_Branchesasof122023_2').style['mix-blend-mode'] = 'normal';
-        var layer_Branchesasof122023_2 = new L.geoJson(json_Branchesasof122023_2, {
+        map.createPane('pane_Buffered_1');
+        map.getPane('pane_Buffered_1').style.zIndex = 401;
+        map.getPane('pane_Buffered_1').style['mix-blend-mode'] = 'normal';
+        var layer_Buffered_1 = new L.geoJson(json_Buffered_1, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_Branchesasof122023_2',
-            layerName: 'layer_Branchesasof122023_2',
-            pane: 'pane_Branchesasof122023_2',
-            onEachFeature: pop_Branchesasof122023_2,
+            dataVar: 'json_Buffered_1',
+            layerName: 'layer_Buffered_1',
+            pane: 'pane_Buffered_1',
+            onEachFeature: pop_Buffered_1,
+            style: style_Buffered_1_0,
+        });
+        bounds_group.addLayer(layer_Buffered_1);
+        map.addLayer(layer_Buffered_1);
+        function pop_WellsRBC_02272024_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">WellStatus</th>\
+                        <td class="visible-with-data" id="WellStatus">' + (feature.properties['WellStatus'] !== null ? autolinker.link(feature.properties['WellStatus'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">OperatorNa</th>\
+                        <td class="visible-with-data" id="OperatorNa">' + (feature.properties['OperatorNa'] !== null ? autolinker.link(feature.properties['OperatorNa'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_WellsRBC_02272024_2_0(feature) {
+            switch(String(feature.properties['WellStatus'])) {
+                case 'Active':
+                    return {
+                pane: 'pane_WellsRBC_02272024_2',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(48,18,59,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Canceled':
+                    return {
+                pane: 'pane_WellsRBC_02272024_2',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(70,134,251,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Idle':
+                    return {
+                pane: 'pane_WellsRBC_02272024_2',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(27,229,181,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'New':
+                    return {
+                pane: 'pane_WellsRBC_02272024_2',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(164,252,60,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Plugged':
+                    return {
+                pane: 'pane_WellsRBC_02272024_2',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(251,185,56,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Unknown':
+                    return {
+                pane: 'pane_WellsRBC_02272024_2',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,68,10,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_WellsRBC_02272024_2',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(122,4,3,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_WellsRBC_02272024_2');
+        map.getPane('pane_WellsRBC_02272024_2').style.zIndex = 402;
+        map.getPane('pane_WellsRBC_02272024_2').style['mix-blend-mode'] = 'normal';
+        var layer_WellsRBC_02272024_2 = new L.geoJson(json_WellsRBC_02272024_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_WellsRBC_02272024_2',
+            layerName: 'layer_WellsRBC_02272024_2',
+            pane: 'pane_WellsRBC_02272024_2',
+            onEachFeature: pop_WellsRBC_02272024_2,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_Branchesasof122023_2_0(feature));
+                return L.circleMarker(latlng, style_WellsRBC_02272024_2_0(feature));
             },
         });
-        bounds_group.addLayer(layer_Branchesasof122023_2);
-        map.addLayer(layer_Branchesasof122023_2);
-        var osmGeocoder = new L.Control.Geocoder({
-            collapsed: true,
-            position: 'topleft',
-            text: 'Search',
-            title: 'Testing'
-        }).addTo(map);
-        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
-        .className += ' fa fa-search';
-        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
-        .title += 'Search for a place';
+        bounds_group.addLayer(layer_WellsRBC_02272024_2);
+        map.addLayer(layer_WellsRBC_02272024_2);
         var baseMaps = {};
-        L.control.layers(baseMaps,{'<img src="Branchesasof122023_2.png" /> Branches as of 12/2023': layer_Branchesasof122023_2,'Tract Income<br /><table><tr><td style="text-align: center;"><img src="TractIncome_1_TractIncomenotavailable0.png" /></td><td>Tract Income not available</td></tr><tr><td style="text-align: center;"><img src="TractIncome_1_LowIncome1.png" /></td><td>Low Income</td></tr><tr><td style="text-align: center;"><img src="TractIncome_1_ModerateIncome2.png" /></td><td>Moderate Income</td></tr><tr><td style="text-align: center;"><img src="TractIncome_1_MiddleIncome3.png" /></td><td>Middle Income</td></tr><tr><td style="text-align: center;"><img src="TractIncome_1_UpperIncome4.png" /></td><td>Upper Income</td></tr></table>': layer_TractIncome_1,"OpenStreetMap": layer_OpenStreetMap_0,},{collapsed:false}).addTo(map);
+        L.control.layers(baseMaps,{'Wells-RBC_02-27-2024<br /><table><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_2_Active0.png" /></td><td>Active</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_2_Canceled1.png" /></td><td>Canceled</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_2_Idle2.png" /></td><td>Idle</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_2_New3.png" /></td><td>New</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_2_Plugged4.png" /></td><td>Plugged</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_2_Unknown5.png" /></td><td>Unknown</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_2_6.png" /></td><td></td></tr></table>': layer_WellsRBC_02272024_2,'<img src="legend/Buffered_1.png" /> Buffered': layer_Buffered_1,"OpenStreetMap": layer_OpenStreetMap_0,},{collapsed:false}).addTo(map);
         setBounds();
         var mapDiv = document.getElementById('map');
         var row = document.createElement('div');
@@ -617,7 +364,7 @@
         document.getElementById("all").appendChild(col1);
         document.getElementById("all").appendChild(col2);
         col1.appendChild(mapDiv)
-        var Filters = {"Tract Income": "str","Tract Minority": "str","Bank": "str"};
+        var Filters = {"WellStatus": "str"};
         function filterFunc() {
           map.eachLayer(function(lyr){
           if ("options" in lyr && "dataVar" in lyr["options"]){
@@ -709,289 +456,39 @@
         }
             document.getElementById("menu").appendChild(
                 document.createElement("div"));
-            var div_TractIncome = document.createElement('div');
-            div_TractIncome.id = "div_TractIncome";
-            div_TractIncome.className= "filterselect";
-            document.getElementById("menu").appendChild(div_TractIncome);
-            sel_TractIncome = document.createElement('select');
-            sel_TractIncome.multiple = true;
-            sel_TractIncome.size = 5;
-            sel_TractIncome.id = "sel_TractIncome";
-            var TractIncome_options_str = "<option value='' unselected></option>";
-            sel_TractIncome.onchange = function(){filterFunc()};
-            TractIncome_options_str  += '<option value="low income">low income</option>';
-            TractIncome_options_str  += '<option value="middle income">middle income</option>';
-            TractIncome_options_str  += '<option value="moderate income">moderate income</option>';
-            TractIncome_options_str  += '<option value="tract income not available">tract income not available</option>';
-            TractIncome_options_str  += '<option value="upper income">upper income</option>';
-            sel_TractIncome.innerHTML = TractIncome_options_str;
-            div_TractIncome.appendChild(sel_TractIncome);
-            var lab_TractIncome = document.createElement('div');
-            lab_TractIncome.innerHTML = 'Tract Income';
-            lab_TractIncome.className = 'filterlabel';
-            div_TractIncome.appendChild(lab_TractIncome);
-            var reset_TractIncome = document.createElement('div');
-            reset_TractIncome.innerHTML = 'clear filter';
-            reset_TractIncome.className = 'filterlabel';
-            reset_TractIncome.onclick = function() {
-                var options = document.getElementById("sel_TractIncome").options;
+            var div_WellStatus = document.createElement('div');
+            div_WellStatus.id = "div_WellStatus";
+            div_WellStatus.className= "filterselect";
+            document.getElementById("menu").appendChild(div_WellStatus);
+            sel_WellStatus = document.createElement('select');
+            sel_WellStatus.multiple = true;
+            sel_WellStatus.size = 6;
+            sel_WellStatus.id = "sel_WellStatus";
+            var WellStatus_options_str = "<option value='' unselected></option>";
+            sel_WellStatus.onchange = function(){filterFunc()};
+            WellStatus_options_str  += '<option value="Active">Active</option>';
+            WellStatus_options_str  += '<option value="Canceled">Canceled</option>';
+            WellStatus_options_str  += '<option value="Idle">Idle</option>';
+            WellStatus_options_str  += '<option value="New">New</option>';
+            WellStatus_options_str  += '<option value="Plugged">Plugged</option>';
+            WellStatus_options_str  += '<option value="Unknown">Unknown</option>';
+            sel_WellStatus.innerHTML = WellStatus_options_str;
+            div_WellStatus.appendChild(sel_WellStatus);
+            var lab_WellStatus = document.createElement('div');
+            lab_WellStatus.innerHTML = 'WellStatus';
+            lab_WellStatus.className = 'filterlabel';
+            div_WellStatus.appendChild(lab_WellStatus);
+            var reset_WellStatus = document.createElement('div');
+            reset_WellStatus.innerHTML = 'clear filter';
+            reset_WellStatus.className = 'filterlabel';
+            reset_WellStatus.onclick = function() {
+                var options = document.getElementById("sel_WellStatus").options;
                 for (var i=0; i < options.length; i++) {
                     options[i].selected = false;
                 }
                 filterFunc();
             };
-            div_TractIncome.appendChild(reset_TractIncome);
-            document.getElementById("menu").appendChild(
-                document.createElement("div"));
-            var div_TractMinority = document.createElement('div');
-            div_TractMinority.id = "div_TractMinority";
-            div_TractMinority.className= "filterselect";
-            document.getElementById("menu").appendChild(div_TractMinority);
-            sel_TractMinority = document.createElement('select');
-            sel_TractMinority.multiple = true;
-            sel_TractMinority.size = 2;
-            sel_TractMinority.id = "sel_TractMinority";
-            var TractMinority_options_str = "<option value='' unselected></option>";
-            sel_TractMinority.onchange = function(){filterFunc()};
-            TractMinority_options_str  += '<option value="majority-minority">majority-minority</option>';
-            TractMinority_options_str  += '<option value="majority-white">majority-white</option>';
-            sel_TractMinority.innerHTML = TractMinority_options_str;
-            div_TractMinority.appendChild(sel_TractMinority);
-            var lab_TractMinority = document.createElement('div');
-            lab_TractMinority.innerHTML = 'Tract Minority';
-            lab_TractMinority.className = 'filterlabel';
-            div_TractMinority.appendChild(lab_TractMinority);
-            var reset_TractMinority = document.createElement('div');
-            reset_TractMinority.innerHTML = 'clear filter';
-            reset_TractMinority.className = 'filterlabel';
-            reset_TractMinority.onclick = function() {
-                var options = document.getElementById("sel_TractMinority").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_TractMinority.appendChild(reset_TractMinority);
-            document.getElementById("menu").appendChild(
-                document.createElement("div"));
-            var div_Bank = document.createElement('div');
-            div_Bank.id = "div_Bank";
-            div_Bank.className= "filterselect";
-            document.getElementById("menu").appendChild(div_Bank);
-            sel_Bank = document.createElement('select');
-            sel_Bank.multiple = true;
-            sel_Bank.size = 10;
-            sel_Bank.id = "sel_Bank";
-            var Bank_options_str = "<option value='' unselected></option>";
-            sel_Bank.onchange = function(){filterFunc()};
-            Bank_options_str  += '<option value="1st Capital Bank">1st Capital Bank</option>';
-            Bank_options_str  += '<option value="Amalgamated Bank">Amalgamated Bank</option>';
-            Bank_options_str  += '<option value="American Business Bank">American Business Bank</option>';
-            Bank_options_str  += '<option value="American Continental Bank">American Continental Bank</option>';
-            Bank_options_str  += '<option value="American First National Bank">American First National Bank</option>';
-            Bank_options_str  += '<option value="American Plus Bank, N.A.">American Plus Bank, N.A.</option>';
-            Bank_options_str  += '<option value="American Riviera Bank">American Riviera Bank</option>';
-            Bank_options_str  += '<option value="Armed Forces Bank, National Association">Armed Forces Bank, National Association</option>';
-            Bank_options_str  += '<option value="Asian Pacific National Bank">Asian Pacific National Bank</option>';
-            Bank_options_str  += '<option value="Austin Capital Bank SSB">Austin Capital Bank SSB</option>';
-            Bank_options_str  += '<option value="Avidbank">Avidbank</option>';
-            Bank_options_str  += '<option value="Axos Bank">Axos Bank</option>';
-            Bank_options_str  += '<option value="BAC Community Bank">BAC Community Bank</option>';
-            Bank_options_str  += '<option value="BEACON BUSINESS BANK, NATIONAL ASSOCIATION">BEACON BUSINESS BANK, NATIONAL ASSOCIATION</option>';
-            Bank_options_str  += '<option value="BMO Bank National Association">BMO Bank National Association</option>';
-            Bank_options_str  += '<option value="BNY Mellon, National Association">BNY Mellon, National Association</option>';
-            Bank_options_str  += '<option value="Balboa Thrift and Loan Association">Balboa Thrift and Loan Association</option>';
-            Bank_options_str  += '<option value="Banc of California, National Association">Banc of California, National Association</option>';
-            Bank_options_str  += '<option value="Bank Irvine">Bank Irvine</option>';
-            Bank_options_str  += '<option value="Bank OZK">Bank OZK</option>';
-            Bank_options_str  += '<option value="Bank of America California, National Association">Bank of America California, National Association</option>';
-            Bank_options_str  += '<option value="Bank of America, National Association">Bank of America, National Association</option>';
-            Bank_options_str  += '<option value="Bank of England">Bank of England</option>';
-            Bank_options_str  += '<option value="Bank of Hope">Bank of Hope</option>';
-            Bank_options_str  += '<option value="Bank of Marin">Bank of Marin</option>';
-            Bank_options_str  += '<option value="Bank of San Francisco">Bank of San Francisco</option>';
-            Bank_options_str  += '<option value="Bank of Southern California, N.A.">Bank of Southern California, N.A.</option>';
-            Bank_options_str  += '<option value="Bank of Stockton">Bank of Stockton</option>';
-            Bank_options_str  += '<option value="Bank of Whittier, National Association">Bank of Whittier, National Association</option>';
-            Bank_options_str  += '<option value="Bank of the Orient">Bank of the Orient</option>';
-            Bank_options_str  += '<option value="Bank of the Sierra">Bank of the Sierra</option>';
-            Bank_options_str  += '<option value="Banner Bank">Banner Bank</option>';
-            Bank_options_str  += '<option value="Beach Cities Commercial Bank">Beach Cities Commercial Bank</option>';
-            Bank_options_str  += '<option value="Beal Bank">Beal Bank</option>';
-            Bank_options_str  += '<option value="Beal Bank USA">Beal Bank USA</option>';
-            Bank_options_str  += '<option value="Beneficial State Bank">Beneficial State Bank</option>';
-            Bank_options_str  += '<option value="Byline Bank">Byline Bank</option>';
-            Bank_options_str  += '<option value="C3bank, National Association">C3bank, National Association</option>';
-            Bank_options_str  += '<option value="CIBC Bank USA">CIBC Bank USA</option>';
-            Bank_options_str  += '<option value="CIBC National Trust Company">CIBC National Trust Company</option>';
-            Bank_options_str  += '<option value="COMMONWEALTH BUSINESS BANK">COMMONWEALTH BUSINESS BANK</option>';
-            Bank_options_str  += '<option value="CTBC Bank Corp. (USA)">CTBC Bank Corp. (USA)</option>';
-            Bank_options_str  += '<option value="CalPrivate Bank">CalPrivate Bank</option>';
-            Bank_options_str  += '<option value="California Bank of Commerce">California Bank of Commerce</option>';
-            Bank_options_str  += '<option value="California Business Bank">California Business Bank</option>';
-            Bank_options_str  += '<option value="California International Bank, N.A.">California International Bank, N.A.</option>';
-            Bank_options_str  += '<option value="California Pacific Bank">California Pacific Bank</option>';
-            Bank_options_str  += '<option value="Capital Bank and Trust Company">Capital Bank and Trust Company</option>';
-            Bank_options_str  += '<option value="Cass Commercial Bank">Cass Commercial Bank</option>';
-            Bank_options_str  += '<option value="Cathay Bank">Cathay Bank</option>';
-            Bank_options_str  += '<option value="Central Valley Community Bank">Central Valley Community Bank</option>';
-            Bank_options_str  += '<option value="Chino Commercial Bank, N.A.">Chino Commercial Bank, N.A.</option>';
-            Bank_options_str  += '<option value="Citibank, National Association">Citibank, National Association</option>';
-            Bank_options_str  += '<option value="Citizens Business Bank">Citizens Business Bank</option>';
-            Bank_options_str  += '<option value="Citizens National Bank of Texas">Citizens National Bank of Texas</option>';
-            Bank_options_str  += '<option value="City First Bank, National Association">City First Bank, National Association</option>';
-            Bank_options_str  += '<option value="City National Bank">City National Bank</option>';
-            Bank_options_str  += '<option value="Column National Association">Column National Association</option>';
-            Bank_options_str  += '<option value="Comerica Bank">Comerica Bank</option>';
-            Bank_options_str  += '<option value="Commerce West Bank">Commerce West Bank</option>';
-            Bank_options_str  += '<option value="Commercial Bank of California">Commercial Bank of California</option>';
-            Bank_options_str  += '<option value="Community Bank of Santa Maria">Community Bank of Santa Maria</option>';
-            Bank_options_str  += '<option value="Community Bank of the Bay">Community Bank of the Bay</option>';
-            Bank_options_str  += '<option value="Community Commerce Bank">Community Commerce Bank</option>';
-            Bank_options_str  += '<option value="Community Valley Bank">Community Valley Bank</option>';
-            Bank_options_str  += '<option value="Community West Bank, National Association">Community West Bank, National Association</option>';
-            Bank_options_str  += '<option value="Cornerstone Community Bank">Cornerstone Community Bank</option>';
-            Bank_options_str  += '<option value="EH National Bank">EH National Bank</option>';
-            Bank_options_str  += '<option value="East West Bank">East West Bank</option>';
-            Bank_options_str  += '<option value="Eastern International Bank">Eastern International Bank</option>';
-            Bank_options_str  += '<option value="El Dorado Savings Bank, F.S.B.">El Dorado Savings Bank, F.S.B.</option>';
-            Bank_options_str  += '<option value="Endeavor Bank">Endeavor Bank</option>';
-            Bank_options_str  += '<option value="Enterprise Bank & Trust">Enterprise Bank & Trust</option>';
-            Bank_options_str  += '<option value="EverTrust Bank">EverTrust Bank</option>';
-            Bank_options_str  += '<option value="Evolve Bank & Trust">Evolve Bank & Trust</option>';
-            Bank_options_str  += '<option value="Exchange Bank">Exchange Bank</option>';
-            Bank_options_str  += '<option value="FFB Bank">FFB Bank</option>';
-            Bank_options_str  += '<option value="Farmers & Merchants Bank of Central California">Farmers & Merchants Bank of Central California</option>';
-            Bank_options_str  += '<option value="Farmers and Merchants Bank of Long Beach">Farmers and Merchants Bank of Long Beach</option>';
-            Bank_options_str  += '<option value="First American Trust, FSB">First American Trust, FSB</option>';
-            Bank_options_str  += '<option value="First Bank">First Bank</option>';
-            Bank_options_str  += '<option value="First Commercial Bank (USA)">First Commercial Bank (USA)</option>';
-            Bank_options_str  += '<option value="First Credit Bank">First Credit Bank</option>';
-            Bank_options_str  += '<option value="First Federal Savings and Loan Association of San Rafael">First Federal Savings and Loan Association of San Rafael</option>';
-            Bank_options_str  += '<option value="First Foundation Bank">First Foundation Bank</option>';
-            Bank_options_str  += '<option value="First General Bank">First General Bank</option>';
-            Bank_options_str  += '<option value="First IC Bank">First IC Bank</option>';
-            Bank_options_str  += '<option value="First Northern Bank of Dixon">First Northern Bank of Dixon</option>';
-            Bank_options_str  += '<option value="First Pacific Bank">First Pacific Bank</option>';
-            Bank_options_str  += '<option value="First Western Trust Bank">First Western Trust Bank</option>';
-            Bank_options_str  += '<option value="First-Citizens Bank & Trust Company">First-Citizens Bank & Trust Company</option>';
-            Bank_options_str  += '<option value="FirstBank">FirstBank</option>';
-            Bank_options_str  += '<option value="Five Star Bank">Five Star Bank</option>';
-            Bank_options_str  += '<option value="Flagstar Bank, National Association">Flagstar Bank, National Association</option>';
-            Bank_options_str  += '<option value="Fremont Bank">Fremont Bank</option>';
-            Bank_options_str  += '<option value="GBC International Bank">GBC International Bank</option>';
-            Bank_options_str  += '<option value="Gateway Bank, F.S.B.">Gateway Bank, F.S.B.</option>';
-            Bank_options_str  += '<option value="Genesis Bank">Genesis Bank</option>';
-            Bank_options_str  += '<option value="Golden Bank, National Association">Golden Bank, National Association</option>';
-            Bank_options_str  += '<option value="Golden State Bank">Golden State Bank</option>';
-            Bank_options_str  += '<option value="Golden Valley Bank">Golden Valley Bank</option>';
-            Bank_options_str  += '<option value="HCN Bank">HCN Bank</option>';
-            Bank_options_str  += '<option value="HSBC Bank USA, National Association">HSBC Bank USA, National Association</option>';
-            Bank_options_str  += '<option value="HTLF Bank">HTLF Bank</option>';
-            Bank_options_str  += '<option value="Habib American Bank">Habib American Bank</option>';
-            Bank_options_str  += '<option value="Hanmi Bank">Hanmi Bank</option>';
-            Bank_options_str  += '<option value="Hatch Bank">Hatch Bank</option>';
-            Bank_options_str  += '<option value="Heritage Bank of Commerce">Heritage Bank of Commerce</option>';
-            Bank_options_str  += '<option value="Home Bank of California">Home Bank of California</option>';
-            Bank_options_str  += '<option value="HomeStreet Bank">HomeStreet Bank</option>';
-            Bank_options_str  += '<option value="Icon Business Bank">Icon Business Bank</option>';
-            Bank_options_str  += '<option value="Industrial and Commercial Bank of China USA, National Association">Industrial and Commercial Bank of China USA, National Association</option>';
-            Bank_options_str  += '<option value="Infinity Bank">Infinity Bank</option>';
-            Bank_options_str  += '<option value="Israel Discount Bank of New York">Israel Discount Bank of New York</option>';
-            Bank_options_str  += '<option value="JPMorgan Chase Bank, National Association">JPMorgan Chase Bank, National Association</option>';
-            Bank_options_str  += '<option value="Legacy Bank">Legacy Bank</option>';
-            Bank_options_str  += '<option value="LendingClub Bank, National Association">LendingClub Bank, National Association</option>';
-            Bank_options_str  += '<option value="Liberty Bank, National Association">Liberty Bank, National Association</option>';
-            Bank_options_str  += '<option value="Luther Burbank Savings">Luther Burbank Savings</option>';
-            Bank_options_str  += '<option value="Magnolia Bank, Incorporated">Magnolia Bank, Incorporated</option>';
-            Bank_options_str  += '<option value="Malaga Bank F.S.B.">Malaga Bank F.S.B.</option>';
-            Bank_options_str  += '<option value="Mechanics Bank">Mechanics Bank</option>';
-            Bank_options_str  += '<option value="Mega Bank">Mega Bank</option>';
-            Bank_options_str  += '<option value="Metropolitan Bank">Metropolitan Bank</option>';
-            Bank_options_str  += '<option value="MidFirst Bank">MidFirst Bank</option>';
-            Bank_options_str  += '<option value="Mission Bank">Mission Bank</option>';
-            Bank_options_str  += '<option value="Mission National Bank">Mission National Bank</option>';
-            Bank_options_str  += '<option value="Mission Valley Bank">Mission Valley Bank</option>';
-            Bank_options_str  += '<option value="Mizrahi Tefahot Bank, Ltd.">Mizrahi Tefahot Bank, Ltd.</option>';
-            Bank_options_str  += '<option value="Montecito Bank & Trust">Montecito Bank & Trust</option>';
-            Bank_options_str  += '<option value="Monterey County Bank">Monterey County Bank</option>';
-            Bank_options_str  += '<option value="Murphy Bank">Murphy Bank</option>';
-            Bank_options_str  += '<option value="Nano Banc">Nano Banc</option>';
-            Bank_options_str  += '<option value="Neighborhood National Bank">Neighborhood National Bank</option>';
-            Bank_options_str  += '<option value="New OMNI Bank, National Association">New OMNI Bank, National Association</option>';
-            Bank_options_str  += '<option value="Oak Valley Community Bank">Oak Valley Community Bank</option>';
-            Bank_options_str  += '<option value="OneUnited Bank">OneUnited Bank</option>';
-            Bank_options_str  += '<option value="Open Bank">Open Bank</option>';
-            Bank_options_str  += '<option value="PCB Bank">PCB Bank</option>';
-            Bank_options_str  += '<option value="PNC Bank, National Association">PNC Bank, National Association</option>';
-            Bank_options_str  += '<option value="Pacific Alliance Bank">Pacific Alliance Bank</option>';
-            Bank_options_str  += '<option value="Pacific Coast Bankers&apos; Bank">Pacific Coast Bankers&apos; Bank</option>';
-            Bank_options_str  += '<option value="Pacific Premier Bank">Pacific Premier Bank</option>';
-            Bank_options_str  += '<option value="Pacific Valley Bank">Pacific Valley Bank</option>';
-            Bank_options_str  += '<option value="Pacific Western Bank">Pacific Western Bank</option>';
-            Bank_options_str  += '<option value="Partners Bank of California">Partners Bank of California</option>';
-            Bank_options_str  += '<option value="Pinnacle Bank">Pinnacle Bank</option>';
-            Bank_options_str  += '<option value="Plumas Bank">Plumas Bank</option>';
-            Bank_options_str  += '<option value="Poppy Bank">Poppy Bank</option>';
-            Bank_options_str  += '<option value="Preferred Bank">Preferred Bank</option>';
-            Bank_options_str  += '<option value="Provident Savings Bank, F.S.B.">Provident Savings Bank, F.S.B.</option>';
-            Bank_options_str  += '<option value="Redwood Capital Bank">Redwood Capital Bank</option>';
-            Bank_options_str  += '<option value="River City Bank">River City Bank</option>';
-            Bank_options_str  += '<option value="River Valley Community Bank">River Valley Community Bank</option>';
-            Bank_options_str  += '<option value="Royal Business Bank">Royal Business Bank</option>';
-            Bank_options_str  += '<option value="SMBC MANUBANK">SMBC MANUBANK</option>';
-            Bank_options_str  += '<option value="Santa Cruz County Bank">Santa Cruz County Bank</option>';
-            Bank_options_str  += '<option value="Savings Bank of Mendocino County">Savings Bank of Mendocino County</option>';
-            Bank_options_str  += '<option value="Shinhan Bank America">Shinhan Bank America</option>';
-            Bank_options_str  += '<option value="Silvergate Bank">Silvergate Bank</option>';
-            Bank_options_str  += '<option value="SoFi Bank, National Association">SoFi Bank, National Association</option>';
-            Bank_options_str  += '<option value="Southwestern National Bank">Southwestern National Bank</option>';
-            Bank_options_str  += '<option value="State Bank of India (California)">State Bank of India (California)</option>';
-            Bank_options_str  += '<option value="Sterling Bank and Trust, FSB">Sterling Bank and Trust, FSB</option>';
-            Bank_options_str  += '<option value="Summit Bank">Summit Bank</option>';
-            Bank_options_str  += '<option value="Summit State Bank">Summit State Bank</option>';
-            Bank_options_str  += '<option value="Sunwest Bank">Sunwest Bank</option>';
-            Bank_options_str  += '<option value="TIB National Association">TIB National Association</option>';
-            Bank_options_str  += '<option value="The Bank of New York Mellon">The Bank of New York Mellon</option>';
-            Bank_options_str  += '<option value="The Bank of New York Mellon Trust Company, National Association">The Bank of New York Mellon Trust Company, National Association</option>';
-            Bank_options_str  += '<option value="The Northern Trust Company">The Northern Trust Company</option>';
-            Bank_options_str  += '<option value="Tri Counties Bank">Tri Counties Bank</option>';
-            Bank_options_str  += '<option value="Tustin Community Bank">Tustin Community Bank</option>';
-            Bank_options_str  += '<option value="U.S. Bank National Association">U.S. Bank National Association</option>';
-            Bank_options_str  += '<option value="US Metro Bank">US Metro Bank</option>';
-            Bank_options_str  += '<option value="Umpqua Bank">Umpqua Bank</option>';
-            Bank_options_str  += '<option value="United Business Bank">United Business Bank</option>';
-            Bank_options_str  += '<option value="United Fidelity Bank, fsb">United Fidelity Bank, fsb</option>';
-            Bank_options_str  += '<option value="United Pacific Bank">United Pacific Bank</option>';
-            Bank_options_str  += '<option value="United Security Bank">United Security Bank</option>';
-            Bank_options_str  += '<option value="Universal Bank">Universal Bank</option>';
-            Bank_options_str  += '<option value="Valley National Bank">Valley National Bank</option>';
-            Bank_options_str  += '<option value="Wallis Bank">Wallis Bank</option>';
-            Bank_options_str  += '<option value="Wells Fargo Bank, National Association">Wells Fargo Bank, National Association</option>';
-            Bank_options_str  += '<option value="Westamerica Bank">Westamerica Bank</option>';
-            Bank_options_str  += '<option value="Western Alliance Bank">Western Alliance Bank</option>';
-            Bank_options_str  += '<option value="Wilmington Trust, National Association">Wilmington Trust, National Association</option>';
-            Bank_options_str  += '<option value="Woori America Bank">Woori America Bank</option>';
-            Bank_options_str  += '<option value="Zions Bancorporation, N.A.">Zions Bancorporation, N.A.</option>';
-            sel_Bank.innerHTML = Bank_options_str;
-            div_Bank.appendChild(sel_Bank);
-            var lab_Bank = document.createElement('div');
-            lab_Bank.innerHTML = 'Bank';
-            lab_Bank.className = 'filterlabel';
-            div_Bank.appendChild(lab_Bank);
-            var reset_Bank = document.createElement('div');
-            reset_Bank.innerHTML = 'clear filter';
-            reset_Bank.className = 'filterlabel';
-            reset_Bank.onclick = function() {
-                var options = document.getElementById("sel_Bank").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_Bank.appendChild(reset_Bank);
-
-
- </script>
-</body>
+            div_WellStatus.appendChild(reset_WellStatus);
+        </script>
+    </body>
 </html>
