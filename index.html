@@ -8,14 +8,10 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
         <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
-        <link rel="stylesheet" href="css/filter.css">
-<link rel="stylesheet" href="css/nouislider.min.css">
         <style>
-        html, body, #map {
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
+        #map {
+            width: 1383px;
+            height: 812px;
         }
         </style>
         <title></title>
@@ -32,13 +28,9 @@
         <script src="js/rbush.min.js"></script>
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
-        <script src="js/proj4.js"></script>
-        <script src="js/proj4leaflet.js"></script>
-        <script src="js/tailDT.js"></script>
-<script src="js/nouislider.min.js"></script>
-<script src="js/wNumb.js"></script>
-        <script src="data/Buffered_1.js"></script>
-        <script src="data/WellsRBC_02272024_2.js"></script>
+        <script src="data/TractRace_1.js"></script>
+        <script src="data/TractIncome_2.js"></script>
+        <script src="data/WellsRBC_02272024_3.js"></script>
         <script>
         var highlightLayer;
         function highlightFeature(e) {
@@ -56,15 +48,9 @@
             }
             highlightLayer.openPopup();
         }
-        var crs = new L.Proj.CRS('EPSG:4269', '+proj=longlat +datum=NAD83 +no_defs', {
-            resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07],
-        });
         var map = L.map('map', {
-            crs: crs,
-            continuousWorld: false,
-            worldCopyJump: false, 
             zoomControl:true, maxZoom:28, minZoom:1
-        }).fitBounds([[32.88821726714055,-121.5952335326351],[37.593241215749025,-114.48801723262515]]);
+        }).fitBounds([[30.744108941666667,-125.46333708611112],[40.6981036916667,-108.49239048148175]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -107,7 +93,7 @@
         });
         layer_OpenStreetMap_0;
         map.addLayer(layer_OpenStreetMap_0);
-        function pop_Buffered_1(feature, layer) {
+        function pop_TractRace_1(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (i in e.target._eventParents) {
@@ -124,18 +110,6 @@
                 mouseover: highlightFeature,
             });
             var popupContent = '<table>\
-                    <tr>\
-                        <th scope="row">FACILITY N</th>\
-                        <td class="visible-with-data" id="FACILITY N">' + (feature.properties['FACILITY N'] !== null ? autolinker.link(feature.properties['FACILITY N'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">PARENT COM</th>\
-                        <td class="visible-with-data" id="PARENT COM">' + (feature.properties['PARENT COM'] !== null ? autolinker.link(feature.properties['PARENT COM'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">GHG QUANTI</th>\
-                        <td class="visible-with-data" id="GHG QUANTI">' + (feature.properties['GHG QUANTI'] !== null ? autolinker.link(feature.properties['GHG QUANTI'].toLocaleString()) : '') + '</td>\
-                    </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
             var popup = layer.getPopup();
@@ -144,36 +118,173 @@
             popup.setContent(updatedContent);
         }
 
-        function style_Buffered_1_0() {
-            return {
-                pane: 'pane_Buffered_1',
+        function style_TractRace_1_0(feature) {
+            switch(String(feature.properties['Trace Race'])) {
+                case 'majority-minorty':
+                    return {
+                pane: 'pane_TractRace_1',
                 opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
+                color: 'rgba(35,35,35,0.5579999999999999)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
                 weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(114,155,111,1.0)',
-                interactive: true,
+                fillColor: 'rgba(87,27,96,0.5579999999999999)',
+                interactive: false,
+            }
+                    break;
+                case 'majority-white':
+                    return {
+                pane: 'pane_TractRace_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5579999999999999)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,0.5579999999999999)',
+                interactive: false,
+            }
+                    break;
             }
         }
-        map.createPane('pane_Buffered_1');
-        map.getPane('pane_Buffered_1').style.zIndex = 401;
-        map.getPane('pane_Buffered_1').style['mix-blend-mode'] = 'normal';
-        var layer_Buffered_1 = new L.geoJson(json_Buffered_1, {
+        map.createPane('pane_TractRace_1');
+        map.getPane('pane_TractRace_1').style.zIndex = 401;
+        map.getPane('pane_TractRace_1').style['mix-blend-mode'] = 'normal';
+        var layer_TractRace_1 = new L.geoJson(json_TractRace_1, {
             attribution: '',
-            interactive: true,
-            dataVar: 'json_Buffered_1',
-            layerName: 'layer_Buffered_1',
-            pane: 'pane_Buffered_1',
-            onEachFeature: pop_Buffered_1,
-            style: style_Buffered_1_0,
+            interactive: false,
+            dataVar: 'json_TractRace_1',
+            layerName: 'layer_TractRace_1',
+            pane: 'pane_TractRace_1',
+            onEachFeature: pop_TractRace_1,
+            style: style_TractRace_1_0,
         });
-        bounds_group.addLayer(layer_Buffered_1);
-        map.addLayer(layer_Buffered_1);
-        function pop_WellsRBC_02272024_2(feature, layer) {
+        bounds_group.addLayer(layer_TractRace_1);
+        map.addLayer(layer_TractRace_1);
+        function pop_TractIncome_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_TractIncome_2_0(feature) {
+            switch(String(feature.properties['Recoded In'])) {
+                case 'low income':
+                    return {
+                pane: 'pane_TractIncome_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,0,0,0.5)',
+                interactive: false,
+            }
+                    break;
+                case 'moderate income':
+                    return {
+                pane: 'pane_TractIncome_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(87,27,96,0.5)',
+                interactive: false,
+            }
+                    break;
+                case 'middle income':
+                    return {
+                pane: 'pane_TractIncome_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(243,110,65,0.5)',
+                interactive: false,
+            }
+                    break;
+                case 'null':
+                    return {
+                pane: 'pane_TractIncome_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(128,128,128,0.0)',
+                interactive: false,
+            }
+                    break;
+                case 'upper income':
+                    return {
+                pane: 'pane_TractIncome_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(250,197,192,0.5)',
+                interactive: false,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_TractIncome_2');
+        map.getPane('pane_TractIncome_2').style.zIndex = 402;
+        map.getPane('pane_TractIncome_2').style['mix-blend-mode'] = 'normal';
+        var layer_TractIncome_2 = new L.geoJson(json_TractIncome_2, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_TractIncome_2',
+            layerName: 'layer_TractIncome_2',
+            pane: 'pane_TractIncome_2',
+            onEachFeature: pop_TractIncome_2,
+            style: style_TractIncome_2_0,
+        });
+        bounds_group.addLayer(layer_TractIncome_2);
+        map.addLayer(layer_TractIncome_2);
+        function pop_WellsRBC_02272024_3(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (i in e.target._eventParents) {
@@ -206,11 +317,11 @@
             popup.setContent(updatedContent);
         }
 
-        function style_WellsRBC_02272024_2_0(feature) {
+        function style_WellsRBC_02272024_3_0(feature) {
             switch(String(feature.properties['WellStatus'])) {
                 case 'Active':
                     return {
-                pane: 'pane_WellsRBC_02272024_2',
+                pane: 'pane_WellsRBC_02272024_3',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -226,7 +337,7 @@
                     break;
                 case 'Canceled':
                     return {
-                pane: 'pane_WellsRBC_02272024_2',
+                pane: 'pane_WellsRBC_02272024_3',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -242,7 +353,7 @@
                     break;
                 case 'Idle':
                     return {
-                pane: 'pane_WellsRBC_02272024_2',
+                pane: 'pane_WellsRBC_02272024_3',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -258,7 +369,7 @@
                     break;
                 case 'New':
                     return {
-                pane: 'pane_WellsRBC_02272024_2',
+                pane: 'pane_WellsRBC_02272024_3',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -274,7 +385,7 @@
                     break;
                 case 'Plugged':
                     return {
-                pane: 'pane_WellsRBC_02272024_2',
+                pane: 'pane_WellsRBC_02272024_3',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -290,7 +401,7 @@
                     break;
                 case 'Unknown':
                     return {
-                pane: 'pane_WellsRBC_02272024_2',
+                pane: 'pane_WellsRBC_02272024_3',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -304,191 +415,31 @@
                 interactive: true,
             }
                     break;
-                default:
-                    return {
-                pane: 'pane_WellsRBC_02272024_2',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(122,4,3,1.0)',
-                interactive: true,
-            }
-                    break;
             }
         }
-        map.createPane('pane_WellsRBC_02272024_2');
-        map.getPane('pane_WellsRBC_02272024_2').style.zIndex = 402;
-        map.getPane('pane_WellsRBC_02272024_2').style['mix-blend-mode'] = 'normal';
-        var layer_WellsRBC_02272024_2 = new L.geoJson(json_WellsRBC_02272024_2, {
+        map.createPane('pane_WellsRBC_02272024_3');
+        map.getPane('pane_WellsRBC_02272024_3').style.zIndex = 403;
+        map.getPane('pane_WellsRBC_02272024_3').style['mix-blend-mode'] = 'normal';
+        var layer_WellsRBC_02272024_3 = new L.geoJson(json_WellsRBC_02272024_3, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_WellsRBC_02272024_2',
-            layerName: 'layer_WellsRBC_02272024_2',
-            pane: 'pane_WellsRBC_02272024_2',
-            onEachFeature: pop_WellsRBC_02272024_2,
+            dataVar: 'json_WellsRBC_02272024_3',
+            layerName: 'layer_WellsRBC_02272024_3',
+            pane: 'pane_WellsRBC_02272024_3',
+            onEachFeature: pop_WellsRBC_02272024_3,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_WellsRBC_02272024_2_0(feature));
+                return L.circleMarker(latlng, style_WellsRBC_02272024_3_0(feature));
             },
         });
-        bounds_group.addLayer(layer_WellsRBC_02272024_2);
-        map.addLayer(layer_WellsRBC_02272024_2);
+        bounds_group.addLayer(layer_WellsRBC_02272024_3);
+        map.addLayer(layer_WellsRBC_02272024_3);
         var baseMaps = {};
-        L.control.layers(baseMaps,{'Wells-RBC_02-27-2024<br /><table><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_2_Active0.png" /></td><td>Active</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_2_Canceled1.png" /></td><td>Canceled</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_2_Idle2.png" /></td><td>Idle</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_2_New3.png" /></td><td>New</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_2_Plugged4.png" /></td><td>Plugged</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_2_Unknown5.png" /></td><td>Unknown</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_2_6.png" /></td><td></td></tr></table>': layer_WellsRBC_02272024_2,'<img src="legend/Buffered_1.png" /> Buffered': layer_Buffered_1,"OpenStreetMap": layer_OpenStreetMap_0,},{collapsed:false}).addTo(map);
+        L.control.layers(baseMaps,{'Wells-RBC_02-27-2024<br /><table><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_3_Active0.png" /></td><td>Active</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_3_Canceled1.png" /></td><td>Canceled</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_3_Idle2.png" /></td><td>Idle</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_3_New3.png" /></td><td>New</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_3_Plugged4.png" /></td><td>Plugged</td></tr><tr><td style="text-align: center;"><img src="legend/WellsRBC_02272024_3_Unknown5.png" /></td><td>Unknown</td></tr></table>': layer_WellsRBC_02272024_3,'Tract Income<br /><table><tr><td style="text-align: center;"><img src="legend/TractIncome_2_lowincome0.png" /></td><td>low income</td></tr><tr><td style="text-align: center;"><img src="legend/TractIncome_2_moderateincome1.png" /></td><td>moderate income</td></tr><tr><td style="text-align: center;"><img src="legend/TractIncome_2_middleincome2.png" /></td><td>middle income</td></tr><tr><td style="text-align: center;"><img src="legend/TractIncome_2_null3.png" /></td><td>null</td></tr><tr><td style="text-align: center;"><img src="legend/TractIncome_2_upperincome4.png" /></td><td>upper income</td></tr></table>': layer_TractIncome_2,'Tract Race<br /><table><tr><td style="text-align: center;"><img src="legend/TractRace_1_majorityminorty0.png" /></td><td>majority-minorty</td></tr><tr><td style="text-align: center;"><img src="legend/TractRace_1_majoritywhite1.png" /></td><td>majority-white</td></tr></table>': layer_TractRace_1,"OpenStreetMap": layer_OpenStreetMap_0,},{collapsed:false}).addTo(map);
         setBounds();
-        var mapDiv = document.getElementById('map');
-        var row = document.createElement('div');
-        row.className="row";
-        row.id="all";
-        row.style.height = "100%";
-        var col1 = document.createElement('div');
-        col1.className="col9";
-        col1.id = "mapWindow";
-        col1.style.height = "99%";
-        col1.style.width = "80%";
-        col1.style.display = "inline-block";
-        var col2 = document.createElement('div');
-        col2.className="col3";
-        col2.id = "menu";
-        col2.style.display = "inline-block";
-        mapDiv.parentNode.insertBefore(row, mapDiv);
-        document.getElementById("all").appendChild(col1);
-        document.getElementById("all").appendChild(col2);
-        col1.appendChild(mapDiv)
-        var Filters = {"WellStatus": "str"};
-        function filterFunc() {
-          map.eachLayer(function(lyr){
-          if ("options" in lyr && "dataVar" in lyr["options"]){
-            features = this[lyr["options"]["dataVar"]].features.slice(0);
-            try{
-              for (key in Filters){
-                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
-                if (Filters[key] == "str" || Filters[key] == "bool"){
-                  var selection = [];
-                  var options = document.getElementById("sel_" + keyS).options
-                  for (var i=0; i < options.length; i++) {
-                    if (options[i].selected) selection.push(options[i].value);
-                  }
-                    try{
-                      if (key in features[0].properties){
-                        for (i = features.length - 1;
-                          i >= 0; --i){
-                          if (selection.indexOf(
-                          features[i].properties[key])<0
-                          && selection.length>0) {
-                          features.splice(i,1);
-                          }
-                        }
-                      }
-                    } catch(err){
-                  }
-                }
-                if (Filters[key] == "int"){
-                  sliderVals =  document.getElementById(
-                    "div_" + keyS).noUiSlider.get();
-                  try{
-                    if (key in features[0].properties){
-                    for (i = features.length - 1; i >= 0; --i){
-                      if (parseInt(features[i].properties[key])
-                          < sliderVals[0]
-                          || parseInt(features[i].properties[key])
-                          > sliderVals[1]){
-                            features.splice(i,1);
-                          }
-                        }
-                      }
-                    } catch(err){
-                    }
-                  }
-                if (Filters[key] == "real"){
-                  sliderVals =  document.getElementById(
-                    "div_" + keyS).noUiSlider.get();
-                  try{
-                    if (key in features[0].properties){
-                    for (i = features.length - 1; i >= 0; --i){
-                      if (features[i].properties[key]
-                          < sliderVals[0]
-                          || features[i].properties[key]
-                          > sliderVals[1]){
-                            features.splice(i,1);
-                          }
-                        }
-                      }
-                    } catch(err){
-                    }
-                  }
-                if (Filters[key] == "date"
-                  || Filters[key] == "datetime"
-                  || Filters[key] == "time"){
-                  try{
-                    if (key in features[0].properties){
-                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
-                      startdate = document.getElementById("dat_" +
-                        HTMLkey + "_date1").value.replace(" ", "T");
-                      enddate = document.getElementById("dat_" +
-                        HTMLkey + "_date2").value.replace(" ", "T");
-                      for (i = features.length - 1; i >= 0; --i){
-                        if (features[i].properties[key] < startdate
-                          || features[i].properties[key] > enddate){
-                          features.splice(i,1);
-                        }
-                      }
-                    }
-                  } catch(err){
-                  }
-                }
-              }
-            } catch(err){
-            }
-          this[lyr["options"]["layerName"]].clearLayers();
-          this[lyr["options"]["layerName"]].addData(features);
-          }
-          })
-        }
-            document.getElementById("menu").appendChild(
-                document.createElement("div"));
-            var div_WellStatus = document.createElement('div');
-            div_WellStatus.id = "div_WellStatus";
-            div_WellStatus.className= "filterselect";
-            document.getElementById("menu").appendChild(div_WellStatus);
-            sel_WellStatus = document.createElement('select');
-            sel_WellStatus.multiple = true;
-            sel_WellStatus.size = 6;
-            sel_WellStatus.id = "sel_WellStatus";
-            var WellStatus_options_str = "<option value='' unselected></option>";
-            sel_WellStatus.onchange = function(){filterFunc()};
-            WellStatus_options_str  += '<option value="Active">Active</option>';
-            WellStatus_options_str  += '<option value="Canceled">Canceled</option>';
-            WellStatus_options_str  += '<option value="Idle">Idle</option>';
-            WellStatus_options_str  += '<option value="New">New</option>';
-            WellStatus_options_str  += '<option value="Plugged">Plugged</option>';
-            WellStatus_options_str  += '<option value="Unknown">Unknown</option>';
-            sel_WellStatus.innerHTML = WellStatus_options_str;
-            div_WellStatus.appendChild(sel_WellStatus);
-            var lab_WellStatus = document.createElement('div');
-            lab_WellStatus.innerHTML = 'WellStatus';
-            lab_WellStatus.className = 'filterlabel';
-            div_WellStatus.appendChild(lab_WellStatus);
-            var reset_WellStatus = document.createElement('div');
-            reset_WellStatus.innerHTML = 'clear filter';
-            reset_WellStatus.className = 'filterlabel';
-            reset_WellStatus.onclick = function() {
-                var options = document.getElementById("sel_WellStatus").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_WellStatus.appendChild(reset_WellStatus);
         </script>
     </body>
 </html>
