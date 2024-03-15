@@ -3,7 +3,7 @@ const fs = require('fs'); // Node.js file system module
 const geojsonvt = require('geojson-vt');
 
 // Read the GeoJSON file
-const geoJSONFilePath = "C:\\Users\\Jamie Buell\\Documents\\tract_income.geojson";
+const geoJSONFilePath = "tract_income.geojson";
 const geoJSONData = fs.readFileSync(geoJSONFilePath, 'utf8');
 
 // Parse the GeoJSON data into an object
